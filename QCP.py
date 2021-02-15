@@ -77,8 +77,8 @@ C = cnot()
 P = phase()
 
 # initialises |0> and |1> as matricies, I havent doubled checked these are correct yet
-x = (1/np.sqrt(2)) * np.array([[1],[0]])
-y = (1/np.sqrt(2)) * np.array([[0],[1]])
+x = np.array([[1],[0]])
+y = np.array([[0],[1]])
 
 # some tests to see the Hadamard gate and phase gates acting on |0> and |1>
 f1 = np.matmul(H,x)
