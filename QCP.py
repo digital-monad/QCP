@@ -77,20 +77,23 @@ C = cnot()
 P = phase()
 
 # initialises |0> and |1> as matricies, I havent doubled checked these are correct yet
-x = (1/np.sqrt(2)) * np.array([0,1])
-y = (1/np.sqrt(2)) * np.array([1,0])
+x = (1/np.sqrt(2)) * np.array([[1],[0]])
+y = (1/np.sqrt(2)) * np.array([[0],[1]])
 
 # some tests to see the Hadamard gate and phase gates acting on |0> and |1>
-f1 = x * H
-f2 = y * H
-f3 = x * P
-f4 = y * P
+f1 = np.matmul(H,x)
+f2 = np.matmul(H,y)
+f3 = np.matmul(P,x)
+f4 = np.matmul(P,y)
 
 # print functions are sums of matricies, but also need to calc probability from complex numbers
+print(x)
 print("Hadamard gate acting on |0> and |1>")
-print(np.sum(f1))
-print(np.sum(f2))
+print(f1)
+print( )
+print(f2)
 print()
 print("Phase gate acting on |0> and |1>")
-print(np.sum(f3))
-print(np.sum(f4))
+print(f3)
+print()
+print(f4)
