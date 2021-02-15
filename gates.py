@@ -58,8 +58,6 @@ def entangle():
 
 def grover2bit():
     # 2 qubit Grover
-    # I have literally no clue how this works
-    # I just followed Zihao's incredibly useful instructions and it seems to agree
     qRegister = tensorProduct(ZERO,ZERO)
     HH = tensorProduct(H,H)
     qRegister = np.dot(HH,qRegister)
