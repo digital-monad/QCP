@@ -64,7 +64,11 @@ def entangle():
 
 def grover2bit(q1,q2):
     # 2 qubit Grover
+<<<<<<< HEAD
     qRegister = tensorProduct(q1,q2)
+=======
+    qRegister = tensorProduct(ZERO,ZERO)
+>>>>>>> f452cff63ed5b26e30908c223280d82cc7926114
     HH = tensorProduct(H,H)
     qRegister = np.dot(HH,qRegister)
     qRegister = np.dot(cZ,qRegister)
@@ -78,6 +82,10 @@ def grover2bit(q1,q2):
     print("Measuring...\n")
     MeasureAll(qRegister)
 
+<<<<<<< HEAD
 # grover2bit(ZERO,ZERO)
 
 print(tensorProduct(X,I))
+=======
+grover2bit()
+>>>>>>> f452cff63ed5b26e30908c223280d82cc7926114
