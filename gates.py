@@ -9,6 +9,12 @@ def tensorProduct(U,V):
             result[r*rV:(r+1)*rV,c*cV:(c+1)*cV] = U[r,c] * V
     return result
 
+def tensorPower(U,n):
+    result = U
+    for i in range(n-1):
+        result = tensorProduct(result,U)
+    return result
+
 ZERO = np.array([[1],[0]])
 ONE = np.array([[0],[1]])
 
@@ -42,7 +48,7 @@ def MeasureAll(register):
     cum_prob = np.cumsum(register**2)
     r = np.random.rand()
     measurement = np.searchsorted(cum_prob,r)
-    print(f"Collapsed into basis state |{measurement}>")
+    print(f"Collapsed into basis state |{measurement}> (|{bin(measurement)[2:]}>)")
     return measurement
 
 
@@ -56,11 +62,9 @@ def entangle():
     # print(qRegister)
     MeasureAll(qRegister) # Measure the state of the register
 
-def grover2bit():
+def grover2bit(q1,q2):
     # 2 qubit Grover
-    # I have literally no clue how this works
-    # I just followed Zihao's incredibly useful instructions and it seems to agree
-    qRegister = tensorProduct(ZERO,ZERO)
+    qRegister = tensorProduct(q1,q2)
     HH = tensorProduct(H,H)
     qRegister = np.dot(HH,qRegister)
     qRegister = np.dot(cZ,qRegister)
@@ -74,4 +78,6 @@ def grover2bit():
     print("Measuring...\n")
     MeasureAll(qRegister)
 
-grover2bit()
+# grover2bit(ZERO,ZERO)
+
+print(tensorProduct(X,I))

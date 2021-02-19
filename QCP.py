@@ -1,6 +1,5 @@
 # QCP
 import numpy as np
-import matplotlib as plt
 import cmath
 
 # shorthand for i
