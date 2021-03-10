@@ -11,7 +11,7 @@ class SparseMatrix:
         if row in self.cols[col]:
             return self.cols[col][row]
         else:
-            return 0
+            return 0.0
 
     def __setitem__(self,indices,value):
         row, col = indices
@@ -26,12 +26,18 @@ class SparseMatrix:
                     for thisRow in thisColumn:
                         result[thisRow,col] = result[thisRow,col] + other.cols[col][row] * thisColumn[thisRow]
             return result
+        elif isinstance(other,np.ndarray):
+            newRegister = np.zeros_like(other,dtype=float)
+            for col in range(self.dim):
+                for row in self.cols[col]:
+                    newRegister[row] += self.cols[col][row] * other[col]
+            return newRegister
         elif isinstance(other, (int,float)):
             for col in range(len(self.cols)):
                 self.cols[col] = dict(map(lambda x : (x[0],other*x[1]), self.cols[col].items()))
             return self
 
-    def __rmul__(self,other):
+    def __rmatmul__(self,other):
         if isinstance(other, (int,float)):
             return self.__mul__(other)
 
@@ -46,18 +52,15 @@ class SparseMatrix:
         return output
 
     def __mul__(self,other):
-        result = SparseMatrix(self.dim**2)
-        for row in range(self.dim**2):
-            for col in range(self.dim**2):
-                result[row,col] = self[row//self.dim,col//self.dim] * other[row%self.dim,col%self.dim]
+        dim = self.dim*other.dim
+        result = SparseMatrix(dim)
+        for row in range(dim):
+            for col in range(dim):
+                result[row,col] = self[row//other.dim,col//other.dim] * other[row%other.dim,col%other.dim]
         return result
 
-
-def fromDense(M):
-    assert M.shape[0] == M.shape[1]
-    sp = SparseMatrix(M.shape[0])
-    for col in range(M.shape[0]):
-        for row in range(M.shape[0]):
-            if M[row,col] != 0:
-                sp[row,col] = M[row,col]
-    return sp
+    def __pow__(self,power):
+        result = self
+        for i in range(power-1):
+            result *= self
+        return result
