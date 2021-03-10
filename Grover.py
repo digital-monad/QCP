@@ -38,21 +38,27 @@ def grover(n,ws):
     qState = np.dot(hadamardAll,qState)
     # Perform rotation
     # Change number in for loop - getting weird results
-    for iteration in range(1):
+    for iteration in range(4):
         # Apply the phase oracle
+        xAll = tensorPower(gates.X,n)
         oracle = constructOracle(n,ws)
+
         qState = np.dot(oracle,qState)
         # Probability amplification (diffuser)
         qState = np.dot(hadamardAll,qState)
-        xAll = tensorPower(gates.X,n)
         qState = np.dot(xAll,qState)
         qState = np.dot(cnZ(n),qState)
         qState = np.dot(xAll,qState)
-        qState = -np.dot(hadamardAll,qState)
+        qState = np.dot(hadamardAll,qState)
     # Operations introduce a global phase, hence the -
     # This does not matter when it is measured
-    print("Final register state:")
-    print(qState)
-    gates.MeasureAll(qState)
+    #print("Final register state:")
+    #print(qState)
+    print("Measurement after 4 iterations of grover: ")
+    measurement = gates.MeasureAll(qState)
+    print(f"P(|{measurement}>) = {qState[measurement]**2}")
 
-grover(3,[5,6])
+n = 5
+w = np.random.randint(0,pow(2,5))
+print(f"Random marked state is |{w}>")
+grover(n,[w])
