@@ -17,7 +17,7 @@ class SparseMatrix:
         row, col = indices
         self.cols[col][row] = value
 
-    def __mul__(self,other):
+    def __matmul__(self,other):
         if isinstance(other, SparseMatrix):
             result = SparseMatrix(self.dim)
             for col in range(len(other.cols)):
@@ -45,7 +45,7 @@ class SparseMatrix:
             output += "\n"
         return output
 
-    def tensorProduct(self,other):
+    def __mul__(self,other):
         result = SparseMatrix(self.dim**2)
         for row in range(self.dim**2):
             for col in range(self.dim**2):
