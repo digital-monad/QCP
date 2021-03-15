@@ -101,7 +101,6 @@ class explicit_matrices:
 
     # gates that act upon a single qubit with an operation (reminder to send the qubit number)
 
-
     # empty (for now, we want every single state in this form: compose them from a 1 qubit gate + identity and
     # repeated tensor products to combine if necessary. setup depends on qubit number and which qubit is acted on)
 
@@ -121,7 +120,7 @@ class explicit_matrices:
         H_single = init * (1 / np.sqrt(2))
 
         for val in range(self.qubit_n - 1):  # v slow, but works
-            if val+1 in list:
+            if val + 1 in list:
                 H = self.tensor_product(H, H_single)
             else:
                 H = self.tensor_product(H, I)
@@ -139,12 +138,13 @@ class explicit_matrices:
         X_single = X
         I = np.array([[1, 0], [0, 1]])
         if not 0 in list:
-            X = I # special case for if the first qubit does not have an x gate across it (zero isn't in list)
+            X = I  # special case for if the first qubit does not have an x gate across it (zero isn't in list)
         for val in range(self.qubit_n - 1):  # v slow, but works
-            if val+1 in list:
+            if val + 1 in list:
                 X = self.tensor_product(X, X_single)
             else:
                 X = self.tensor_product(X, I)
+
         self.state = X.dot(self.state)
 
     def y_list(self, list):
@@ -155,9 +155,9 @@ class explicit_matrices:
         Y_single = Y
         I = np.array([[1, 0], [0, 1]])
         if not 0 in list:
-            Y = I # special case for if the first qubit does not have an x gate across it (zero isn't in list)
+            Y = I  # special case for if the first qubit does not have an x gate across it (zero isn't in list)
         for val in range(self.qubit_n - 1):  # v slow, but works
-            if val+1 in list:
+            if val + 1 in list:
                 Y = self.tensor_product(Y, Y_single)
             else:
                 Y = self.tensor_product(Y, I)
@@ -181,10 +181,6 @@ class explicit_matrices:
 
         self.state = Z.dot(self.state)
 
-
-
-
-
     # controlled gates (act on multiple qubits, in some more complicated way)
 
     def c_z_last(self):
@@ -194,9 +190,9 @@ class explicit_matrices:
             C[i, i] = 1
 
         C[self.n - 1, self.n - 1] = -1
-        #print("aaa")
-        #print(self.n)
-        #print(C)
+        # print("aaa")
+        # print(self.n)
+        # print(C)
         self.state = C.dot(self.state)
 
     def cnot(self):
@@ -209,27 +205,62 @@ class explicit_matrices:
 
         self.state = C.dot(self.state)
 
-    def oracle(self):
-        # which oracle is this?
-        # randomly has one -1 along the diagonal
-        n = 3
-        r = np.random.randint(0, self.n)
-        O = np.zeros([self.n, self.n], dtype=complex)
+    def oracle_general(self, ws):
+        # Create n qubit dummy oracle with ws as solution states
+        oracle = np.eye(pow(2, int(self.qubit_n)))
+        for w in ws:
+            oracle[w, w] = -1
+        return np.dot(oracle, self.state)
 
-        for i in range(0, n):
-            if i != r:
-                O[i, i] = 1
-            else:
-                O[i, i] = -1
 
-        self.state = O.dot(self.state)  # perform operation on entangle
+class programs:
+
+    def amplifier(self, state):
+        a = 1
+
+    def grovers(state, ws):
+        '''Runs grovers on a state object, with the given ws for the oracle'''
+        state.hadamard_all()
+        # Perform rotation
+        # Change number in for loop - getting weird results
+        for iteration in range(4):
+            # Apply the phase oracle
+
+            state.oracle_general(ws)
+            # Probability amplification (diffuser)
+            state.hadamard_all()
+            state.x_all()
+            state.c_z_last()
+            state.hadamard_all()
+        return state
+
+    def measure(state):
+        '''returns a quantum measurement on the state object'''
+        cum_prob = np.cumsum(state.get_state() ** 2)
+        r = np.random.rand()
+        measurement = np.searchsorted(cum_prob, r)
+        print(f"Collapsed into basis state |{measurement}> (|{bin(measurement)[2:]}>)")
+        return measurement
+
+    def print_register(state):
+        print(f"The quantum register is in the state {state.get_state()}")
+
+# everything above here could be in a separate file if wanted, then imported
+######################################################################################################################
+# the class state has to be defined below, and the entirety of the code in main should make the general control loop
+# for the program. This is to allow for the user to choose the calculation method used during runtime.
 
 
 def main():
-    methods = explicit_matrices  # by changing this, you can change which class is used for the processing of gates
-
     # if the gates are named the same in alternative classes, it should just be a quick swap and any written algorithms
     # should work as before (but potentially more/less efficiently)
+
+    # user input goes here, to decide program, calculation method, inputs.
+
+    input = [[1, 0], [0, 1], [0, 1]]  ###### placeholder: will need to read in data and validate
+    methods = explicit_matrices  # by changing this, you can change which class is used for the processing of gates.
+
+    # can be user defined from a list using a case statement possibly?
 
     class state(methods):
         def __init__(self, bits):
@@ -274,34 +305,25 @@ def main():
         def get_state(self):
             return self.state
 
-    # example of how to use the class:
-
-    np.set_printoptions(formatter={'complex_kind': '{:.5f}'.format}) # formatting, hides floating point errors from
+    np.set_printoptions(formatter={'complex_kind': '{:.5f}'.format})  # formatting, hides floating point errors from
     # making messy looking outputs
-    # N qubit grovers (sifting for 0):
-    input = [[1, 0], [1, 0], [1, 0]]
-    test = state(input)
-    test.hadamard_list([0, 1, 2])
-    test.c_z_last()
-    test.z_all()
-    test.c_z_last()
-    test.hadamard_all()
-    print(test.get_state())
-    print("")
 
-    # N qubit grovers (sifting for 1):
-    input = [[1, 0], [1, 0], [1, 0]]
-    test = state(input)
-    test.hadamard_all()
-    xlist = list(range(0, test.qubit_n -1))
-    test.x_list(xlist)
-    test.c_z_last()
-    test.x_list(xlist)
-    test.z_all()
-    test.c_z_last()
-    test.hadamard_all()
-    print(test.get_state())
-    # right now, most of the gates are a huge mess so it all needs to be more consistent.
+    # every time I write 'run on the state', I mean send the state object (not just tbe vector) to the method.
+
+    # all the outpus/ calculations should go here: create a state with the given inputs,
+    # run the needed programs on that state
+    # to output a measurement, simply run programs.measure on the state
+
+    # example of how to use the class:
+    print("starting")
+    print("...")
+    input = [[1, 0], [0, 1], [0, 1]]
+    my_state = state(input)
+    final_state = programs.grovers(my_state, [5, 6])
+    programs.print_register(final_state)
+    programs.measure(final_state)
+    print("")
+    print("done")
 
 
 main()
