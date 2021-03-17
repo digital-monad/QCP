@@ -503,7 +503,7 @@ class programs:
         print(np.sum(state ** 2))
 
         state.MeasureAll()
-        
+
     def error_correction(state):
         from QuantumRegister import QuantumRegister
         import sparseGates as gates
