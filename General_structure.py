@@ -686,38 +686,42 @@ def UI():
         quit()
     input1 = int(input("Please provide choice of algorythm from options \n (1) Grover \n (2) Shor \n : "))
     print()
-# This checks answer is an option and returns error message and quits program if answer is not an availible choice
-    if input1 != 1:
-        if input1 != 2:
-            print("User input is not recognised")
+    
+    if menu == 1:
+    # This checks answer is an option and returns error message and quits program if answer is not an availible choice
+        if input1 != 1:
+            if input1 != 2:
+                print("User input is not recognised")
+                quit()
+
+        input2 = int(input("Please choose Matricies method \n (1) Explicit \n (2) Sparse Matricies \n : "))
+        print()
+    # This checks answer is an option and returns error message and quits program if answer is not an availible choice
+        if input2 != 1:
+            if input2 != 2:
+                print("User input is not recognised")
+                quit()
+
+        q = int(input("Please choose number of Qubits \n (Provide answer as an integer): "))
+        print()
+    # This checks answer is an option and returns error message and quits program if answer is not an availible choice
+    # it apparently doesnt work
+        if q == str:
+            print("Only Numbers Allowed")
             quit()
 
-    input2 = int(input("Please choose Matricies method \n (1) Explicit \n (2) Sparse Matricies \n : "))
-    print()
-# This checks answer is an option and returns error message and quits program if answer is not an availible choice
-    if input2 != 1:
-        if input2 != 2:
-            print("User input is not recognised")
-            quit()
-
-    q = int(input("Please choose number of Qubits (max 15) \n (Provide answer as an integer): "))
-    print()
-    if q =< 15:
-        print("Runtime error, too many Qubits used")
-        quit()
-
-#ws = list(input("Please choose Winning States \n Provide answer of form [x,y] where x and y are integers: "))
-#   print()
-# This checks answer is an option and returns error message and quits program if answer is not an availible choice
-# it doesnt work
-#    if ws == str:
-#        print("Only Numbers Allowed")
-#        quit()
-    print()
-    w = np.random.randint(0,q-1)
-    ws = [w,w+1]
-    print(ws)
-    main(q,ws,input1,input2)
+    #ws = list(input("Please choose Winning States \n Provide answer of form [x,y] where x and y are integers: "))
+        print()
+    # This checks answer is an option and returns error message and quits program if answer is not an availible choice
+    #    if ws == str:
+    #        print("Only Numbers Allowed")
+    #        quit()
+        print()
+        w = np.random.randint(0,q-1)
+        ws = [w,w+1]
+        print(ws)
+        main(q,ws,input1,input2)
 
 UI()
+
 
