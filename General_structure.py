@@ -481,7 +481,8 @@ class programs:
         return state
 
     def qft(n):
-        import numpy as np
+        # does not follow main program structure due to needing more gates not yet implemented
+        # runs quantum error correction
         from QuantumRegister import QuantumRegister
         import sparseGates as gates
 
