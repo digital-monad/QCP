@@ -476,7 +476,7 @@ class programs:
             state.oracle_general(ws)
             # Probability amplification (diffuser)
             state.hadamard_all()
-            state.x_all()
+            state.x_all_fast()
             state.c_z_last()
             state.hadamard_all()
         return state
@@ -670,7 +670,7 @@ def UI():
     print("Please provide only integer inputs")
     print()
 
-    menu = int(input("Menu options \n (1) Custom Grovers \n (2) 9 Quibit Grovers with error correction \n (3) QFT \n (4) exit \n : "))
+    menu = int(input("Menu options \n (1) Custom Grovers \n (2) 9 Quibit Grovers with error correction \n (3) exit \n : "))
     if menu != 1:
         if menu != 2:
             if menu != 3:
