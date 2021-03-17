@@ -38,7 +38,8 @@ def grover(n,ws):
     qState = np.dot(hadamardAll,qState)
     # Perform rotation
     # Change number in for loop - getting weird results
-    for iteration in range(4):
+    for iteration in range(20):
+        print(f"Iteration {iteration}")
         # Apply the phase oracle
         xAll = tensorPower(gates.X,n)
         oracle = constructOracle(n,ws)
@@ -58,7 +59,7 @@ def grover(n,ws):
     measurement = gates.MeasureAll(qState)
     print(f"P(|{measurement}>) = {qState[measurement]**2}")
 
-n = 5
-w = np.random.randint(0,pow(2,5))
+n = 11
+w = np.random.randint(0,pow(2,n))
 print(f"Random marked state is |{w}>")
 grover(n,[w])

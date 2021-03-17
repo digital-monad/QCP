@@ -27,9 +27,11 @@ class SparseMatrix:
                         result[thisRow,col] = result[thisRow,col] + other.cols[col][row] * thisColumn[thisRow]
             return result
         elif isinstance(other,np.ndarray):
-            newRegister = np.zeros_like(other,dtype=float)
+            newRegister = np.zeros_like(other,dtype=complex)
             for col in range(self.dim):
                 for row in self.cols[col]:
+                    # print(f"Row = {row}")
+                    # print(f"Col = {col}")
                     newRegister[row] += self.cols[col][row] * other[col]
             return newRegister
         elif isinstance(other, (int,float)):
@@ -61,6 +63,6 @@ class SparseMatrix:
 
     def __pow__(self,power):
         result = self
-        for i in range(power-1):
+        for _ in range(power-1):
             result *= self
         return result

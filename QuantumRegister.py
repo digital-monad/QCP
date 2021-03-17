@@ -5,7 +5,7 @@ class QuantumRegister(np.ndarray):
 
     def __new__(cls,n):
         # By default initialises the register to |0>
-        reg = np.zeros((2**n,))
+        reg = np.zeros((2**n,),dtype=complex)
         reg[0] = 1
         return reg.view(cls)
 
