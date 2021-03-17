@@ -590,11 +590,23 @@ def main():
     # if the gates are named the same in alternative classes, it should just be a quick swap and any written algorithms
     # should work as before (but potentially more/less efficiently)
 
+    def qubits(q):
+        zero = np.array([1,0])
+        qs = []
+        for i in range(q):
+            qs.append(zero)
+        return qs
+    
     # user input goes here, to decide program, calculation method, inputs.
 
-    #input = [[1, 0], [0, 1], [0, 1]]  ###### placeholder: will need to read in data and validate
-    methods = explicit_matrices  # by changing this, you can change which class is used for the processing of gates.
-    methods = sparse_matrices
+    input = qubits(q)
+
+    if method == 1:
+        methods = explicit_matrices
+        # by changing this, you can change which class is used for the processing of gates.
+    if method == 2:
+        methods = sparse_matrices
+    # can be user defined from a list using a case statement possibly?
 
     # can be user defined from a list using a case statement possibly?
 
@@ -656,13 +668,56 @@ def main():
     # example of how to use the class:
     print("starting")
     print("...")
-    input = [[1, 0], [1, 0]]#, [1, 0], [1, 0], [1, 0]]
     my_state = state(input)
-    final_state = programs.grovers(my_state, [1])
+    final_state = programs.grovers(my_state, ws)
     programs.print_register(final_state)
     programs.measure(final_state)
     print("")
     print("done")
 
 
-main()
+def UI():
+    print()
+    print("Please provide only integer inputs")
+    print()
+
+    menu = int(input("Menu options \n (1) Custom Grovers \n (2) 9 Quibit Grovers with error correction \n (3) Shor's n Qubit \n (4) exit \n : "))
+    if menu == 4:
+        quit()
+    input1 = int(input("Please provide choice of algorythm from options \n (1) Grover \n (2) Shor \n : "))
+    print()
+# This checks answer is an option and returns error message and quits program if answer is not an availible choice
+    if input1 != 1:
+        if input1 != 2:
+            print("User input is not recognised")
+            quit()
+
+    input2 = int(input("Please choose Matricies method \n (1) Explicit \n (2) Sparse Matricies \n : "))
+    print()
+# This checks answer is an option and returns error message and quits program if answer is not an availible choice
+    if input2 != 1:
+        if input2 != 2:
+            print("User input is not recognised")
+            quit()
+
+    q = int(input("Please choose number of Qubits (max 15) \n (Provide answer as an integer): "))
+    print()
+    if q =< 15:
+        print("Runtime error, too many Qubits used")
+        quit()
+
+#ws = list(input("Please choose Winning States \n Provide answer of form [x,y] where x and y are integers: "))
+#   print()
+# This checks answer is an option and returns error message and quits program if answer is not an availible choice
+# it doesnt work
+#    if ws == str:
+#        print("Only Numbers Allowed")
+#        quit()
+    print()
+    w = np.random.randint(0,q-1)
+    ws = [w,w+1]
+    print(ws)
+    main(q,ws,input1,input2)
+
+UI()
+
