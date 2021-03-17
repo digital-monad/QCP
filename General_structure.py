@@ -309,15 +309,14 @@ class sparse_matrices:
         self.state = X @ self.state
 
     def y_all(self):
-        n = 2
-        Y = np.zeros([2, 2], dtype=complex)
-        Y[0][1] = _i
-        Y[1][0] = i
-        Y_single = Y
-        for val in range(self.qubit_n - 1):  # v slow, but works
-            Y = self.tensor_product(Y, Y_single)
+        Y = self.fromDense(np.array([
+            [0, -i],
+            [i, 0]
+        ]))
 
-        self.state = Y.dot(self.state)
+        Y = Y ** self.qubit_n
+
+        self.state = Y @ self.state
 
     def z_all(self):
         Z = self.fromDense(np.array([
@@ -328,17 +327,7 @@ class sparse_matrices:
 
         self.state = Z @ self.state
 
-    def phase_all(self, phi):
-        # angle can be changed easily, set in pi-radians
-        n = 2
-        P = np.zeros([2, 2], dtype=complex)
-        P[0][0] = 1
-        P[1][1] = np.exp(i * phi * np.pi)
 
-        for val in range(self.qubit_n - 1):  # v slow, but works
-            P = self.tensor_product(P, P)
-
-        self.state = P.dot(self.state)
 
     # gates that act upon a single qubit with an operation (reminder to send the qubit number)
 
@@ -596,14 +585,13 @@ def main():
         for i in range(q):
             qs.append(zero)
         return qs
-    
-    # user input goes here, to decide program, calculation method, inputs.
+
+    # user input, to decide program, calculation method, inputs.
 
     input = qubits(q)
 
     if method == 1:
         methods = explicit_matrices
-        # by changing this, you can change which class is used for the processing of gates.
     if method == 2:
         methods = sparse_matrices
     # can be user defined from a list using a case statement possibly?
@@ -674,6 +662,7 @@ def main():
     programs.measure(final_state)
     print("")
     print("done")
+    programs.QEC()
 
 
 def UI():
@@ -686,7 +675,7 @@ def UI():
         quit()
     input1 = int(input("Please provide choice of algorythm from options \n (1) Grover \n (2) Shor \n : "))
     print()
-    
+
     if menu == 1:
     # This checks answer is an option and returns error message and quits program if answer is not an availible choice
         if input1 != 1:
