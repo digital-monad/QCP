@@ -457,8 +457,6 @@ class sparse_matrices:
 
 class programs:
 
-    def amplifier(self, state):
-        a = 1
 
     def grovers(state, ws):
         '''Runs grovers on a state object, with the given ws for the oracle'''
@@ -478,10 +476,13 @@ class programs:
             state.hadamard_all()
             state.x_all_fast()
             state.c_z_last()
+            state.x_all_fast()
             state.hadamard_all()
         return state
 
     def error_correction(state):
+        # does not follow main program structure due to needing more gates not yet implemented
+        # runs quantum error correction
         from QuantumRegister import QuantumRegister
         import sparseGates as gates
 
