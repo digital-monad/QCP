@@ -694,7 +694,7 @@ def UI():
                 print("User input is not recognised")
                 quit()
 
-        input2 = int(input("Please choose Matricies method \n (1) Explicit \n (2) Sparse Matricies \n : "))
+        input2 = int(input("Please choose Matrix representation \n (1) Explicit \n (2) Sparse Matricies \n : "))
         print()
     # This checks answer is an option and returns error message and quits program if answer is not an availible choice
         if input2 != 1:
