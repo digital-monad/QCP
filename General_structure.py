@@ -66,6 +66,14 @@ class explicit_matrices:
 
         self.state = X.dot(self.state)
 
+    def x_all_fast(self):
+        n = self.qubit_n
+        d = 2**n
+        Xall = np.zeros([d,d])
+        for r in range(d):
+            Xall[r][d - (r+1)] = 1
+        self.state = Xall.dot(self.state)
+        
     def y_all(self):
         n = 2
         Y = np.zeros([2, 2], dtype=complex)
