@@ -583,7 +583,7 @@ class programs:
 # for the program. This is to allow for the user to choose the calculation method used during runtime.
 
 
-def main():
+def main(q,ws,method):
     # if the gates are named the same in alternative classes, it should just be a quick swap and any written algorithms
     # should work as before (but potentially more/less efficiently)
 
@@ -672,24 +672,22 @@ def main():
     print("done")
     programs.QEC()
 
-
 def UI():
     print()
     print("Please provide only integer inputs")
     print()
 
-    menu = int(input("Menu options \n (1) Custom Grovers \n (2) 9 Quibit Grovers with error correction \n (3) Shor's n Qubit \n (4) exit \n : "))
-    if menu == 4:
-        quit()
-    input1 = int(input("Please provide choice of algorythm from options \n (1) Grover \n (2) Shor \n : "))
-    print()
-
-    if menu == 1:
-    # This checks answer is an option and returns error message and quits program if answer is not an availible choice
-        if input1 != 1:
-            if input1 != 2:
+    menu = int(input("Menu options \n (1) Custom Grovers \n (2) 9 Quibit Grovers with error correction \n (3) QFT \n (4) exit \n : "))
+    if menu != 1:
+        if menu != 2:
+            if menu != 3:
                 print("User input is not recognised")
                 quit()
+    if menu == 3:
+        
+        #here we need to call function/s that run QFT
+
+    if menu == 1:
 
         input2 = int(input("Please choose Matrix representation \n (1) Explicit \n (2) Sparse Matricies \n : "))
         print()
@@ -707,17 +705,11 @@ def UI():
             print("Only Numbers Allowed")
             quit()
 
-    #ws = list(input("Please choose Winning States \n Provide answer of form [x,y] where x and y are integers: "))
-        print()
-    # This checks answer is an option and returns error message and quits program if answer is not an availible choice
-    #    if ws == str:
-    #        print("Only Numbers Allowed")
-    #        quit()
         print()
         w = np.random.randint(0,q-1)
         ws = [w,w+1]
         print(ws)
-        main(q,ws,input1,input2)
+        main(q,ws,input2)
 
 UI()
 
