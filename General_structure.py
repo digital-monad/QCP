@@ -481,29 +481,6 @@ class programs:
             state.hadamard_all()
         return state
 
-    def qft(n):
-        from QuantumRegister import QuantumRegister
-        import sparseGates as gates
-        state = QuantumRegister(4)
-        # Start with an n qubit register
-        for rot in range(n - 1):
-            hn = gates.H
-            hn = gates.I ** rot * gates.H if rot > 0 else hn
-            hn = hn * gates.I ** (n - rot - 1)
-            state = hn @ state
-            for qubit in range(n - 1):
-                rotation = gates.CROT(n, qubit + 1, rot, qubit + 2)
-                state = rotation @ state
-        # hadamard the last qubit
-        hn = gates.I ** (n - 1) * gates.H
-        state = hn @ state
-        # Swap pairs of qubits
-        for qubit in range(n // 2):
-            state = gates.swap(n, qubit, n - qubit - 1) @ state
-        print(np.sum(state ** 2))
-
-        state.MeasureAll()
-
     def error_correction(state):
         from QuantumRegister import QuantumRegister
         import sparseGates as gates
@@ -693,11 +670,15 @@ def UI():
     print("Please provide only integer inputs")
     print()
 
-    menu = int(input("Menu options \n (1) Custom Grovers \n (2) 9 Quibit Grovers with error correction \n (3) Shor's n Qubit \n (4) exit \n : "))
-    if menu == 4:
-        quit()
-    input1 = int(input("Please provide choice of algorithm from options \n (1) Grover \n (2) Shor \n : "))
-    print()
+    menu = int(input("Menu options \n (1) Custom Grovers \n (2) 9 Quibit Grovers with error correction \n (3) QFT \n (4) exit \n : "))
+    if menu != 1:
+        if menu != 2:
+            if menu != 3:
+                print("User input is not recognised")
+                quit()
+    if menu == 3:
+
+        # option for QFT was going to be added here but ran out of time, still availble to be run in its own file/format
 
     if menu == 1:
     # This checks answer is an option and returns error message and quits program if answer is not an availible choice
