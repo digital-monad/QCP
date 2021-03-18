@@ -1,6 +1,5 @@
 # QCP
 import numpy as np
-import cmath
 
 # shorthand for i
 i = complex(0,1)

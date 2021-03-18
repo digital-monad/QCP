@@ -1,5 +1,4 @@
 from QFT import QFT
-import numpy as np
 from QuantumRegister import QuantumRegister
 import sparseGates as gates
 

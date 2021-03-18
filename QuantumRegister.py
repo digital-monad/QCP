@@ -1,5 +1,4 @@
 import numpy as np
-import SparseMatrix as SparseMatrix
 
 class QuantumRegister(np.ndarray):
 

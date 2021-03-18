@@ -1,5 +1,3 @@
-import numpy as np
-from QuantumRegister import QuantumRegister
 import sparseGates as gates
 
 # Start with an n qubit register
