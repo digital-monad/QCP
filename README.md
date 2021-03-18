@@ -1,10 +1,10 @@
 # Quantum Computing Project
 
-#usage instructions:
-    # run general_structure.py
+usage instructions:
+    run general_structure.py
    
-    #dependancies:
+    dependancies:
 
-        #General_structure:
+        General_structure:
             
     
