@@ -2,6 +2,7 @@ import numpy as np
 from SparseMatrix import SparseMatrix
 
 def fromDense(M):
+    '''defines a sparse matrix, M'''
     assert M.shape[0] == M.shape[1]
     sp = SparseMatrix(M.shape[0])
     for col in range(M.shape[0]):
@@ -58,14 +59,17 @@ def CROT(n,control, target, k):
     return cROT
 
 def swap(n,bit1,bit2):
+    '''swap bits'''
     return cXs(n,bit1,bit2) @ cXs(n,bit2,bit1) @ cXs(n,bit1,bit2)
 
 def mod_exp(a,j,N):
+    '''repeated exp mod N'''
     for i in range(j):
         a = np.mod(a**2,N)
     return a
 
 def cU(t,n,control,a,j,N):
+    '''Cu'''
     control = t + n - control - 1
     period = 2**control
     cU = SparseMatrix(2**(t+n))
@@ -87,6 +91,7 @@ def cU(t,n,control,a,j,N):
     
 
 def U(n,a,j,N):
+    '''U matrix'''
     U = SparseMatrix(2**n)
     for y in range(2**n):
         if y < N:
@@ -96,6 +101,7 @@ def U(n,a,j,N):
     return U
 
 def Ux(n,a,j,N):
+    '''Ux matrix'''
     U = SparseMatrix(2**n)
     for y in range(2**n):
         if y < N:
@@ -107,13 +113,13 @@ def Ux(n,a,j,N):
 
 
 def cnZ(n):
-    # Matrix for controlled ^ n Z gate
-    # There are n-1 control bits
+    '''Matrix for controlled ^ n Z gate: n-1 control bits'''
     cnZ = np.eye(pow(2,n))
     cnZ[-1,-1] = -1
     return fromDense(cnZ)
 
 def cXs(n,control,target):
+    '''Controlled X gate, on the selected bits'''
     control = n - control - 1
     target = n - target - 1
     cX = SparseMatrix(2**n)
@@ -127,6 +133,7 @@ def cXs(n,control,target):
     return cX
 
 def cZs(n,control,target):
+    '''Controlled Z gate, on the selected bits'''
     control = n - control - 1
     target = n - target - 1
     cX = SparseMatrix(2**n)
@@ -140,13 +147,14 @@ def cZs(n,control,target):
     return cX
 
 def constructOracle(n,ws):
-    # Create n qubit dummy oracle with ws as solution states
+    '''Create n qubit dummy oracle with ws as solution states'''
     oracle = np.eye(pow(2,n))
     for w in ws:
         oracle[w,w] = -1
     return fromDense(oracle)
 
 def MeasureAll(register):
+    '''measure quantum state'''
     cum_prob = np.cumsum(register**2)
     r = np.random.rand()
     measurement = np.searchsorted(cum_prob,r)
