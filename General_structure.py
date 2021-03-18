@@ -8,7 +8,7 @@ import time
 
 
 class explicit_matrices:
-
+    '''gate method implementation using explicitly defined matrices, to be inherited by state if selected'''
 
     def tensor_product(self, U, V):
         '''Naïve tensor product implementation'''
@@ -222,7 +222,7 @@ class explicit_matrices:
 from SparseMatrix import SparseMatrix
 
 class sparse_matrices:
-
+    '''gate method implementation using sparse matrices, to be inherited by state if selected'''
 
     def fromDense(self, M):
         '''defines a sparse matrix'''
@@ -656,6 +656,7 @@ def main(q,ws,method):
 
 
 def UI():
+    '''gets user input through command-line, calls main with input values'''
     print()
     print("Please provide only integer inputs")
     print()
@@ -696,5 +697,6 @@ def UI():
         main(q,ws,input2)
         t2 = time.time()
         print(t2-t1)
+
 UI()
 
