@@ -309,15 +309,14 @@ class sparse_matrices:
         self.state = X @ self.state
 
     def y_all(self):
-        n = 2
-        Y = np.zeros([2, 2], dtype=complex)
-        Y[0][1] = _i
-        Y[1][0] = i
-        Y_single = Y
-        for val in range(self.qubit_n - 1):  # v slow, but works
-            Y = self.tensor_product(Y, Y_single)
+        Y = self.fromDense(np.array([
+            [0, -i],
+            [i, 0]
+        ]))
 
-        self.state = Y.dot(self.state)
+        Y = Y ** self.qubit_n
+
+        self.state = Y @ self.state
 
     def z_all(self):
         Z = self.fromDense(np.array([
@@ -328,17 +327,7 @@ class sparse_matrices:
 
         self.state = Z @ self.state
 
-    def phase_all(self, phi):
-        # angle can be changed easily, set in pi-radians
-        n = 2
-        P = np.zeros([2, 2], dtype=complex)
-        P[0][0] = 1
-        P[1][1] = np.exp(i * phi * np.pi)
 
-        for val in range(self.qubit_n - 1):  # v slow, but works
-            P = self.tensor_product(P, P)
-
-        self.state = P.dot(self.state)
 
     # gates that act upon a single qubit with an operation (reminder to send the qubit number)
 
@@ -468,8 +457,6 @@ class sparse_matrices:
 
 class programs:
 
-    def amplifier(self, state):
-        a = 1
 
     def grovers(state, ws):
         '''Runs grovers on a state object, with the given ws for the oracle'''
@@ -487,12 +474,39 @@ class programs:
             state.oracle_general(ws)
             # Probability amplification (diffuser)
             state.hadamard_all()
-            state.x_all()
+            state.x_all_fast()
             state.c_z_last()
+            state.x_all_fast()
             state.hadamard_all()
         return state
 
+    def qft(n):
+        # does not follow main program structure due to needing more gates not yet implemented
+        # runs quantum error correction
+        from QuantumRegister import QuantumRegister
+        import sparseGates as gates
+
+        state = QuantumRegister(n)
+        for rot in range(n - 1):
+            hn = gates.H
+            hn = gates.I ** rot * gates.H if rot > 0 else hn
+            hn = hn * gates.I ** (n - rot - 1)
+            state = hn @ state
+            for qubit in range(n - 1):
+                rotation = gates.CROT(n, qubit + 1, rot, qubit + 2)
+                state = rotation @ state
+        # hadamard the last qubit
+        hn = gates.I ** (n - 1) * gates.H
+        state = hn @ state
+        # Swap pairs of qubits
+        for qubit in range(n // 2):
+            state = gates.swap(n, qubit, n - qubit - 1) @ state
+        print(np.sum(state ** 2))
+        state.MeasureAll()
+
     def error_correction(state):
+        # does not follow main program structure due to needing more gates not yet implemented
+        # runs quantum error correction
         from QuantumRegister import QuantumRegister
         import sparseGates as gates
 
@@ -596,14 +610,13 @@ def main():
         for i in range(q):
             qs.append(zero)
         return qs
-    
-    # user input goes here, to decide program, calculation method, inputs.
+
+    # user input, to decide program, calculation method, inputs.
 
     input = qubits(q)
 
     if method == 1:
         methods = explicit_matrices
-        # by changing this, you can change which class is used for the processing of gates.
     if method == 2:
         methods = sparse_matrices
     # can be user defined from a list using a case statement possibly?
@@ -674,6 +687,7 @@ def main():
     programs.measure(final_state)
     print("")
     print("done")
+    programs.QEC()
 
 
 def UI():
@@ -681,12 +695,16 @@ def UI():
     print("Please provide only integer inputs")
     print()
 
-    menu = int(input("Menu options \n (1) Custom Grovers \n (2) 9 Quibit Grovers with error correction \n (3) Shor's n Qubit \n (4) exit \n : "))
-    if menu == 4:
-        quit()
-    input1 = int(input("Please provide choice of algorythm from options \n (1) Grover \n (2) Shor \n : "))
-    print()
-    
+    menu = int(input("Menu options \n (1) Custom Grovers \n (2) 9 Quibit Grovers with error correction \n (3) exit \n : "))
+    if menu != 1:
+        if menu != 2:
+            if menu != 3:
+                print("User input is not recognised")
+                quit()
+    if menu == 3:
+
+        # option for QFT was going to be added here but ran out of time, still availble to be run in its own file/format
+
     if menu == 1:
     # This checks answer is an option and returns error message and quits program if answer is not an availible choice
         if input1 != 1:
