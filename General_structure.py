@@ -1,8 +1,8 @@
-# attempt 1 at structuring the code better
+# General structure built up from multiple classes and UI
 import numpy as np
+import time
 
-
-# plan: have multiple classes, each with a suite of all the operations we are going to want, then only inherit/import
+# multiple classes, each with a suite of all the operations we are going to want, then only inherit/import
 # the one we actually want to use (which can be switched really easily) to a class which has many algorithms implemented
 
 # gate naming has to be consistent for this to work
@@ -65,6 +65,14 @@ class explicit_matrices:
             X = self.tensor_product(X, X_single)
 
         self.state = X.dot(self.state)
+
+    def x_all_fast(self):
+        n = self.qubit_n
+        d = 2**n
+        Xall = np.zeros([d,d])
+        for r in range(d):
+            Xall[r][d - (r+1)] = 1
+        self.state = Xall.dot(self.state)
 
     def y_all(self):
         n = 2
@@ -230,40 +238,6 @@ class sparse_matrices:
                     sp[row, col] = M[row, col]
         return sp
 
-    '''ZERO = np.array([1, 0])
-    ONE = np.array([0, 1])
-
-    H = fromDense(np.array([
-        [1, 1],
-        [1, -1]
-    ]) / np.sqrt(2))
-
-    X = fromDense(np.array([
-        [0, 1],
-        [1, 0]
-    ]))
-
-    Z = fromDense(np.array([
-        [1, 0],
-        [0, -1]
-    ]))
-
-    I = fromDense(np.eye(2))
-
-    cX = fromDense(np.array([
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 0, 1],
-        [0, 0, 1, 0]
-    ]))
-
-    cZ = fromDense(np.array([
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, -1]
-    ]))
-'''
     def cnZ(n):
         # Matrix for controlled ^ n Z gate
         # There are n-1 control bits
@@ -295,7 +269,6 @@ class sparse_matrices:
         ]) / np.sqrt(2))
 
         H = H**self.qubit_n
-        print(H)
         self.state = H @ self.state
 
     def x_all(self):
@@ -307,6 +280,15 @@ class sparse_matrices:
         X = X**self.qubit_n
 
         self.state = X @ self.state
+
+    def x_all_fast(self):
+        n = self.qubit_n
+        d = 2**n
+        Xall = np.zeros([d,d])
+        for r in range(d):
+            Xall[r][d - (r+1)] = 1
+        #self.state = Xall.dot(self.state)
+        self.state = Xall @ self.state
 
     def y_all(self):
         Y = self.fromDense(np.array([
@@ -600,7 +582,7 @@ class programs:
 # for the program. This is to allow for the user to choose the calculation method used during runtime.
 
 
-def main():
+def main(q,ws,method):
     # if the gates are named the same in alternative classes, it should just be a quick swap and any written algorithms
     # should work as before (but potentially more/less efficiently)
 
@@ -649,11 +631,6 @@ def main():
                 # add the next bit to the entangled state, using a tensor product:
                 state = list(np.array(state).dot(bit[0])) + list(np.array(state).dot(bit[1]))
 
-            # print("--------------------")
-            # print(state)
-            # a = bits[0] # testing
-            # b = bits[1] # testing
-            # print(np.array([a[0] * b[0], a[0] * b[1], a[1] * b[0], a[1] * b[1]]) == state) # testing, only for 2bit case
             return np.array(state)
 
         def normalise(self, vector):
@@ -670,10 +647,7 @@ def main():
             return self.state
 
     np.set_printoptions(formatter={'complex_kind': '{:.5f}'.format})  # formatting, hides floating point errors from
-    # making messy looking outputs
-
     # every time I write 'run on the state', I mean send the state object (not just tbe vector) to the method.
-
     # all the outputs/ calculations should go here: create a state with the given inputs,
     # run the needed programs on that state
     # to output a measurement, simply run programs.measure on the state
@@ -683,11 +657,11 @@ def main():
     print("...")
     my_state = state(input)
     final_state = programs.grovers(my_state, ws)
-    programs.print_register(final_state)
+    #programs.print_register(final_state)
     programs.measure(final_state)
     print("")
     print("done")
-    programs.QEC()
+    #programs.error_correction(final_state)
 
 
 def UI():
@@ -701,16 +675,11 @@ def UI():
             if menu != 3:
                 print("User input is not recognised")
                 quit()
-    if menu == 3:
 
         # option for QFT was going to be added here but ran out of time, still availble to be run in its own file/format
 
     if menu == 1:
     # This checks answer is an option and returns error message and quits program if answer is not an availible choice
-        if input1 != 1:
-            if input1 != 2:
-                print("User input is not recognised")
-                quit()
 
         input2 = int(input("Please choose Matrix representation \n (1) Explicit \n (2) Sparse Matricies \n : "))
         print()
@@ -728,18 +697,13 @@ def UI():
             print("Only Numbers Allowed")
             quit()
 
-    #ws = list(input("Please choose Winning States \n Provide answer of form [x,y] where x and y are integers: "))
-        print()
-    # This checks answer is an option and returns error message and quits program if answer is not an availible choice
-    #    if ws == str:
-    #        print("Only Numbers Allowed")
-    #        quit()
         print()
         w = np.random.randint(0,q-1)
         ws = [w,w+1]
         print(ws)
-        main(q,ws,input1,input2)
-
+        t1 = time.time()
+        main(q,ws,input2)
+        t2 = time.time()
+        print(t2-t1)
 UI()
-
 
