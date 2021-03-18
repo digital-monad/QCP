@@ -8,6 +8,7 @@ from Grover import Grover
 # Structure: have multiple classes, each with a suite of all the operations we are going to want, then only inherit/import
 # the one we actually want to use (which can be switched really easily) to a class which has many algorithms implemented
 
+
 ######################################################################################################################
 # The class state is defined below, and the entirety of the code in main should make the general control loop
 # for the program. This is to allow for the user to choose the calculation method used during runtime.
