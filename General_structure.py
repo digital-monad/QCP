@@ -1,7 +1,6 @@
 # attempt 1 at structuring the code better
 import numpy as np
 from ExplicitMatrix import ExplicitMatrix
-from SparseMatrix import SparseMatrix
 from sparse_matrices import sparse_matrices
 from Grover import Grover
 
