@@ -5,28 +5,13 @@ import time
 # multiple classes, each with a suite of all the operations we are going to want, then only inherit/import
 # the one we actually want to use (which can be switched really easily) to a class which has many algorithms implemented
 
-# gate naming has to be consistent for this to work
 
 
 class explicit_matrices:
-    # this is going to be one implementation of the gates. Many will follow.
-    # there may be better ways of creating this from a parent class if needed, depends how much can be reused between
-    # this and sparse/lazy matrix implementations
 
-    # weaknesses of this particular implementation (not exhaustive):
-    # ~2 ^2n operations per gate application - v slow
-    # gates generated each time- slow if they are used repeatedly (having the option to store may reduce time if say
-    # we use hadamard again and again in one circuit, though storing adds to memory cost)
-
-    ################################################
-    # THIS CLASS IS A HUGE MESS RIGHT NOW
-    # WE NEED A CLEAR NAMING SCHEME FOR THE METHODS (Multi/single qubit gates etc, so that everything is consistent
-    # and easy to understand and use)
-    ################################################
 
     def tensor_product(self, U, V):
-        ###### should this be in the general class? should each of these classes inherit from an even further up class?
-        # Naïve tensor product implementation
+        '''Naïve tensor product implementation'''
         (rU, cU), (rV, cV) = U.shape, V.shape
         result = np.zeros((rU * rV, cU * cV))
         for r in range(rU):
@@ -38,7 +23,7 @@ class explicit_matrices:
     # hadamard is heavily annotated as an example
 
     def hadamard_all(self):
-        '''applies the hadamard gate to each qubit in the entangled state (by reference)'''
+        '''Applies the hadamard gate to each qubit in the entangled state (by reference)'''
         n = 2  # reminder- needs generalising
 
         init = np.ones([2, 2], dtype=complex)  # set up array
@@ -55,6 +40,7 @@ class explicit_matrices:
         self.state = H.dot(self.state)
 
     def x_all(self):
+        '''Applies the pauli-X gate to each qubit in the entangled state (by reference)'''
         n = 2
         X = np.ones([2, 2], dtype=complex)
         X[0][0] = 0
@@ -67,6 +53,7 @@ class explicit_matrices:
         self.state = X.dot(self.state)
 
     def x_all_fast(self):
+        '''Applies the pauli-X gate to each qubit in the entangled state (by reference), more efficient than x_all'''
         n = self.qubit_n
         d = 2**n
         Xall = np.zeros([d,d])
@@ -75,6 +62,7 @@ class explicit_matrices:
         self.state = Xall.dot(self.state)
 
     def y_all(self):
+        '''Applies the pauli-Y gate to each qubit in the entangled state (by reference)'''
         n = 2
         Y = np.zeros([2, 2], dtype=complex)
         Y[0][1] = _i
@@ -86,6 +74,7 @@ class explicit_matrices:
         self.state = Y.dot(self.state)
 
     def z_all(self):
+        '''Applies the pauli-Z gate to each qubit in the entangled state (by reference)'''
         Z = np.zeros([2, 2], dtype=complex)
         Z[0][0] = 1
         Z[1][1] = -1
@@ -96,6 +85,7 @@ class explicit_matrices:
         self.state = Z.dot(self.state)
 
     def phase_all(self, phi):
+        '''Applies a phase change of phi to all Qubits in the register (by reference)'''
         # angle can be changed easily, set in pi-radians
         n = 2
         P = np.zeros([2, 2], dtype=complex)
@@ -115,7 +105,7 @@ class explicit_matrices:
     # gates that act on the list of qubits sent:
 
     def hadamard_list(self, list):
-        '''applies the hadamard gate to each qubit in the list indices sent (zero based)'''
+        '''applies the hadamard gate to each qubit in the list indices sent (zero based, changes made by reference)'''
         # approach: repeatedly tensor product either an identity or gate depending on if the item is in the list
 
         init = np.ones([2, 2], dtype=complex)  # set up array
@@ -139,6 +129,7 @@ class explicit_matrices:
         self.state = H.dot(self.state)
 
     def x_list(self, list):
+        '''applies the Pauli-X gate to each qubit in the list indices sent (zero based, changes made by reference'''
         # approach: repeatedly tensor product either an identity or gate depending on if the item is in the list
         X = np.ones([2, 2], dtype=complex)
         X[0][0] = 0
@@ -156,6 +147,7 @@ class explicit_matrices:
         self.state = X.dot(self.state)
 
     def y_list(self, list):
+        '''applies the Pauli-Y gate to each qubit in the list indices sent (zero based, changes made by reference'''
         # approach: repeatedly tensor product either an identity or gate depending on if the item is in the list
         Y = np.zeros([2, 2], dtype=complex)
         Y[0][1] = _i
@@ -173,6 +165,7 @@ class explicit_matrices:
         self.state = Y.dot(self.state)
 
     def z_list(self, list):
+        '''applies the Pauli-Z gate to each qubit in the list indices sent (zero based, changes made by reference)'''
         # approach: repeatedly tensor product either an identity or gate depending on if the item is in the list
         Z = np.zeros([2, 2], dtype=complex)
         Z[0][0] = 1
@@ -192,7 +185,7 @@ class explicit_matrices:
     # controlled gates (act on multiple qubits, in some more complicated way)
 
     def c_z_last(self):
-        '''controlled z operating on the last qubit'''
+        '''controlled z operating on the last qubit (changes made by reference)'''
         C = np.zeros([self.n, self.n], dtype=complex)
         for i in range(self.n):
             C[i, i] = 1
@@ -204,6 +197,7 @@ class explicit_matrices:
         self.state = C.dot(self.state)
 
     def cnot(self):
+        '''Cnot gate'''
         n = 4
         C = np.zeros([self.n, self.n])
         C[0][0] = 1
@@ -214,6 +208,7 @@ class explicit_matrices:
         self.state = C.dot(self.state)
 
     def oracle_general(self, ws):
+        '''dummy oracle with ws as solution states (changes made by reference)'''
         # Create n qubit dummy oracle with ws as solution states
 
         oracle = np.eye(pow(2, int(self.qubit_n)))
@@ -230,6 +225,7 @@ class sparse_matrices:
 
 
     def fromDense(self, M):
+        '''defines a sparse matrix'''
         assert M.shape[0] == M.shape[1]
         sp = SparseMatrix(M.shape[0])
         for col in range(M.shape[0]):
@@ -237,27 +233,6 @@ class sparse_matrices:
                 if M[row, col] != 0:
                     sp[row, col] = M[row, col]
         return sp
-
-    def cnZ(n):
-        # Matrix for controlled ^ n Z gate
-        # There are n-1 control bits
-        cnZ = np.eye(pow(2, n))
-        cnZ[-1, -1] = -1
-        return fromDense(cnZ)
-
-    def constructOracle(n, ws):
-        # Create n qubit dummy oracle with ws as solution states
-        oracle = np.eye(pow(2, n))
-        for w in ws:
-            oracle[w, w] = -1
-        return fromDense(oracle)
-
-    def MeasureAll(register):
-        cum_prob = np.cumsum(register ** 2)
-        r = np.random.rand()
-        measurement = np.searchsorted(cum_prob, r)
-        print(f"Collapsed into basis state |{measurement}> (|{bin(measurement)[2:]}>)")
-        return measurement
 
     def hadamard_all(self):
         '''applies the hadamard gate to each qubit in the entangled state (by reference)'''
@@ -272,6 +247,7 @@ class sparse_matrices:
         self.state = H @ self.state
 
     def x_all(self):
+        '''Applies the pauli-X gate to each qubit in the entangled state (by reference)'''
         X = self.fromDense(np.array([
             [0, 1],
             [1, 0]
@@ -282,6 +258,7 @@ class sparse_matrices:
         self.state = X @ self.state
 
     def x_all_fast(self):
+        '''Applies the pauli-X gate to each qubit in the entangled state (by reference), more efficient than x_all'''
         n = self.qubit_n
         d = 2**n
         Xall = np.zeros([d,d])
@@ -291,6 +268,7 @@ class sparse_matrices:
         self.state = Xall @ self.state
 
     def y_all(self):
+        '''Applies the pauli-Y gate to each qubit in the entangled state (by reference)'''
         Y = self.fromDense(np.array([
             [0, -i],
             [i, 0]
@@ -301,6 +279,7 @@ class sparse_matrices:
         self.state = Y @ self.state
 
     def z_all(self):
+        '''Applies the pauli-Z gate to each qubit in the entangled state (by reference)'''
         Z = self.fromDense(np.array([
             [1, 0],
             [0, -1]
@@ -319,8 +298,7 @@ class sparse_matrices:
     # gates that act on the list of qubits sent:
 
     def hadamard_list(self, list):
-        '''applies the hadamard gate to each qubit in the list indices sent (zero based)'''
-        # approach: repeatedly tensor product either an identity or gate depending on if the item is in the list
+        '''applies the hadamard gate to each qubit in the list indices sent (zero based, changes made by reference)'''
 
         H_single = self.fromDense(np.array([
             [1, 1],
@@ -347,7 +325,8 @@ class sparse_matrices:
         self.state = H @ self.state
 
     def x_list(self, list):
-        # approach: repeatedly tensor product either an identity or gate depending on if the item is in the list
+        '''applies the Pauli-X gate to each qubit in the list indices sent (zero based, changes made by reference'''
+
         X_single = self.fromDense(np.array([
             [0, 1],
             [1, 0]
@@ -366,7 +345,8 @@ class sparse_matrices:
         self.state = X @ self.state
 
     def y_list(self, list):
-        # approach: repeatedly tensor product either an identity or gate depending on if the item is in the list
+        '''applies the Pauli-Y gate to each qubit in the list indices sent (zero based, changes made by reference'''
+
         Y = np.zeros([2, 2], dtype=complex)
         Y[0][1] = _i
         Y[1][0] = i
@@ -383,7 +363,8 @@ class sparse_matrices:
         self.state = Y.dot(self.state)
 
     def z_list(self, list):
-        # approach: repeatedly tensor product either an identity or gate depending on if the item is in the list
+        '''applies the Pauli-Z gate to each qubit in the list indices sent (zero based, changes made by reference)'''
+
         Z_single = self.fromDense(np.array([
             [1, 0],
             [0, -1]
@@ -404,7 +385,8 @@ class sparse_matrices:
     # controlled gates (act on multiple qubits, in some more complicated way)
 
     def c_z_last(self):
-        '''controlled z operating on the last qubit'''
+        '''controlled z operating on the last qubit (changes made by reference)'''
+
         C = np.zeros([self.n, self.n], dtype=complex)
         for i in range(self.n):
             C[i, i] = 1
@@ -416,6 +398,7 @@ class sparse_matrices:
         self.state = C.dot(self.state)
 
     def cnot(self):
+        '''Cnot gate, changes made by reference'''
         n = 4
         C = np.zeros([self.n, self.n])
         C[0][0] = 1
@@ -426,7 +409,7 @@ class sparse_matrices:
         self.state = C.dot(self.state)
 
     def oracle_general(self, ws):
-        # Create n qubit dummy oracle with ws as solution states
+        '''dummy oracle with ws as solution states (changes made by reference)'''
 
         oracle = np.eye(pow(2, int(self.qubit_n)))
         for w in ws:
@@ -438,10 +421,10 @@ class sparse_matrices:
 
 
 class programs:
-
+    '''Each quantum program is a method here. This class does not need to be instantiated'''
 
     def grovers(state, ws):
-        '''Runs grovers on a state object, with the given ws for the oracle'''
+        '''Runs grovers on a state object (assuming a quantum register of zeroes), with the given ws for the oracle'''
 
         state.hadamard_all()
         # Perform rotation
@@ -463,8 +446,9 @@ class programs:
         return state
 
     def qft(n):
+        '''Runs a quantum fourier transformation for n qubits'''
+
         # does not follow main program structure due to needing more gates not yet implemented
-        # runs quantum error correction
         from QuantumRegister import QuantumRegister
         import sparseGates as gates
 
@@ -487,6 +471,7 @@ class programs:
         state.MeasureAll()
 
     def error_correction(state):
+        '''runs a demonstration of quantum error correction on the sent state'''
         # does not follow main program structure due to needing more gates not yet implemented
         # runs quantum error correction
         from QuantumRegister import QuantumRegister
@@ -565,7 +550,7 @@ class programs:
         qState.MeasureAll()
 
     def measure(state):
-        '''returns a quantum measurement on the state object'''
+        '''returns and prints a quantum measurement on the state object'''
         cum_prob = np.cumsum(state.get_state() ** 2)
         r = np.random.rand()
         measurement = np.searchsorted(cum_prob, r)
@@ -574,6 +559,7 @@ class programs:
         return measurement
 
     def print_register(state):
+        '''prints the coefficients of the quantum state'''
         print(f"The quantum register is in the state {state.get_state()}")
 
 # everything above here could be in a separate file if wanted, then imported
@@ -583,6 +569,7 @@ class programs:
 
 
 def main(q,ws,method):
+    '''main, takes parameters from the ui and runs the corresponding quantum program'''
     # if the gates are named the same in alternative classes, it should just be a quick swap and any written algorithms
     # should work as before (but potentially more/less efficiently)
 
@@ -606,7 +593,11 @@ def main(q,ws,method):
     # can be user defined from a list using a case statement possibly?
 
     class state(methods):
+        '''A quantum state, imports gate operations from the class specified by "methods", assumed to contain a
+        standard set of methods'''
+
         def __init__(self, bits):
+            '''initialise a quantum state, with the given list of quantum bits. Does the entanglement automatically'''
             self.state = self.entangle(bits)
             self.n = len(self.state)  # = 2 ^ num of entangled qubits
             self.qubit_n = len(bits)
@@ -634,6 +625,7 @@ def main(q,ws,method):
             return np.array(state)
 
         def normalise(self, vector):
+            ''' returns normalised form of sent vector '''
             vector = np.array(vector)  # incase state is sent as a list
             total = 0
             for component in vector:
@@ -641,13 +633,14 @@ def main(q,ws,method):
             return vector / (total ** (1 / 2))
 
         def __matmul__(self, operator):
+            '''matrix multiplication method'''
             return operator @ self
 
         def get_state(self):
+            '''returns the coefficients in the quantum register'''
             return self.state
 
-    np.set_printoptions(formatter={'complex_kind': '{:.5f}'.format})  # formatting, hides floating point errors from
-    # every time I write 'run on the state', I mean send the state object (not just tbe vector) to the method.
+    np.set_printoptions(formatter={'complex_kind': '{:.5f}'.format})  # formatting
     # all the outputs/ calculations should go here: create a state with the given inputs,
     # run the needed programs on that state
     # to output a measurement, simply run programs.measure on the state
@@ -657,11 +650,9 @@ def main(q,ws,method):
     print("...")
     my_state = state(input)
     final_state = programs.grovers(my_state, ws)
-    #programs.print_register(final_state)
     programs.measure(final_state)
     print("")
     print("done")
-    #programs.error_correction(final_state)
 
 
 def UI():
