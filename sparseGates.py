@@ -99,7 +99,7 @@ def Ux(n,a,j,N):
     U = SparseMatrix(2**n)
     for y in range(2**n):
         if y < N:
-            U.cols[y][mod_exp(a,j,N) * np.mod(y,N)] = 1.0
+            U.cols[y][np.mod((a ** (2**j)) *y,N)] = 1.0
         else:
             U.cols[y][y] = 1.0
     return U

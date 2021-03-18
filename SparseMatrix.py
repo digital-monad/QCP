@@ -3,10 +3,12 @@ import numpy as np
 class SparseMatrix:
 
     def __init__(self,dim):
+        '''Initialise the sparse matrix with the column array'''
         self.dim = dim
         self.cols = np.array([dict() for _ in range(dim)])
     
     def __getitem__(self,indices):
+        '''Overload indexing'''
         row, col = indices
         if row in self.cols[col]:
             return self.cols[col][row]
@@ -14,10 +16,12 @@ class SparseMatrix:
             return 0.0
 
     def __setitem__(self,indices,value):
+        '''Overload indexing (set)'''
         row, col = indices
         self.cols[col][row] = value
 
     def __matmul__(self,other):
+        '''sparse matrix multiplication'''
         if isinstance(other, SparseMatrix):
             result = SparseMatrix(self.dim)
             for col in range(len(other.cols)):
@@ -45,6 +49,7 @@ class SparseMatrix:
 
 
     def __str__(self):
+        '''Pretty printing'''
         output = ""
         for row in range(self.dim):
             for col in range(self.dim):
@@ -54,6 +59,7 @@ class SparseMatrix:
         return output
 
     def __mul__(self,other):
+        '''Sparse tensor product'''
         dim = self.dim*other.dim
         result = SparseMatrix(dim)
         for row in range(dim):
@@ -62,6 +68,7 @@ class SparseMatrix:
         return result
 
     def __pow__(self,power):
+        '''Sparse tensor power'''
         result = self
         for _ in range(power-1):
             result *= self
