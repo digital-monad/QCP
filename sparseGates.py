@@ -49,8 +49,9 @@ def CROT(n,control, target, k):
     target = n - target - 1
     cROT = SparseMatrix(2**n)
     period = 2**control
+    periodT = 2**target
     for col in range(2**n):
-        if (col//period)%2 == 1:
+        if (col//period)%2 == 1 and (col//periodT)%2 == 1:
             cROT.cols[col][col] = np.exp(np.pi * 1j / 2**(k-1) )
         else:
             cROT.cols[col][col] = 1
@@ -76,7 +77,9 @@ def cU(t,n,control,a,j,N):
                 applyUx = L_reg
             else:
                 applyUx = np.mod(L_reg * a**(2**j),N)
-            basisTransform = col - L_reg + applyUx
+            basisTransform = int(format(col,'#010b')[:-n] + format(applyUx,'#010b')[-n:],2)
+            if basisTransform > 2**(t+n) - 1:
+                print(f"control {control} j {j} col {col} L_reg {L_reg}")
             cU.cols[col][basisTransform] = 1.0
         else:
             cU.cols[col][col] = 1.0

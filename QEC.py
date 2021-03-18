@@ -72,6 +72,24 @@ finalHs = gates.I**5 * gates.H**4
 qState = finalHs @ qState
 qState.MeasureAll()
 
+measurementToGate = {
+    '0100' : 'X gate on qubit 0',
+    '0111' : 'Y gate on qubit 0',
+    '0011' : 'Z gate on qubit 0',
+    '1010' : 'X gate on qubit 1',
+    '1011' : 'Y gate on qubit 1',
+    '0001' : 'Z gate on qubit 1',
+    '0101' : 'X gate on qubit 2',
+    '1101' : 'Y gate on qubit 2',
+    '1000' : 'Z gate on qubit 2',
+    '0010' : 'X gate on qubit 3',
+    '1110' : 'Y gate on qubit 3',
+    '1100' : 'Z gate on qubit 3',
+    '1001' : 'X gate on qubit 4',
+    '1111' : 'Y gate on qubit 4',
+    '0110' : 'Z gate on qubit 4',
+}
+
 
 
 

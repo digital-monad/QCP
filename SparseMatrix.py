@@ -48,7 +48,7 @@ class SparseMatrix:
         output = ""
         for row in range(self.dim):
             for col in range(self.dim):
-                output += str(self[row,col])
+                output += str(round(self[row,col],3))
                 output += " "
             output += "\n"
         return output

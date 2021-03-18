@@ -3,10 +3,10 @@ import SparseMatrix as SparseMatrix
 
 class QuantumRegister(np.ndarray):
 
-    def __new__(cls,n):
+    def __new__(cls,n,init = 0):
         # By default initialises the register to |0>
         reg = np.zeros((2**n,),dtype=complex)
-        reg[0] = 1
+        reg[init] = 1
         return reg.view(cls)
 
     def __matmul__(self,operator):

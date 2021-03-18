@@ -16,10 +16,8 @@ print("Starting Us")
 
 for i in range(8):
     U_n = gates.cU(8,4,8 - 1 - i,a,i,N)
-    print(i)
     state = U_n @ state
 state = (gates.I**8 * gates.H) @ state
-print(np.sum(state**2))
 
 state.MeasureAll()
 # Apply inverse QFT
